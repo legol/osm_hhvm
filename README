@@ -1,0 +1,8 @@
+to use git:
+echo "# learn_english" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/legol/learn_english.git
+git push -u origin master
+
