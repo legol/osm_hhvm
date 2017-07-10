@@ -1,5 +1,8 @@
 <?hh
 
+// to run this:
+// php /home/ubuntu/git_root/osm_hhvm/osm_parser/osm_parser.php -i/home/ubuntu/git_root/osm_hhvm/test_data/beijing-circle-6.osm
+
 require_once 'OsmParser.php';
 
 // $shortopts  = "";
@@ -30,7 +33,8 @@ async function main(): Awaitable<void> {
     return;
   }
 
-  await OsmParser::create()->parse($input_file);
+  $all_succeeded = await OsmParser::create()->parse($input_file);
+  printf("all succeeded:%d\n", $all_succeeded);
 }
 
 \HH\Asio\join(main());
