@@ -80,10 +80,10 @@ class PostgresqlAdapter {
           '',
           str_replace('T', ' ', idx($node['attributes'], 'timestamp')),
         ),
-        idx($node['attributes'], 'user'),
+      idx($node['attributes'], 'user'),
       idx($node['attributes'], 'uid'),
-      idx($node['attributes'], 'lat'),
       idx($node['attributes'], 'lon'),
+      idx($node['attributes'], 'lat'),
     ));
     if ($result === FALSE) {
       return false;

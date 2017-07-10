@@ -1,5 +1,5 @@
 -- select * from node
-select id, visible, version, changeset, timestamp, user, uid, ST_X(wgs84long_lat) as lat, ST_Y(wgs84long_lat) as long from node
+select id, visible, version, changeset, timestamp, user, uid, ST_X(wgs84long_lat) as lon, ST_Y(wgs84long_lat) as lat from node
 
 -- select all node that belong to ways of a relation
 select distinct way_nd.nd_ref as nd_ref from way_nd where way_nd.way_ref in (select relation_member.ref as way_ref from relation_member where relation_member.type='way' and relation_member.relation_ref=27700)
