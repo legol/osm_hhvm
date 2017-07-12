@@ -33,3 +33,16 @@ type OSMRelation = shape(
   'tags' => Vector<OSMTag>,
   'members' => Vector<OSMRelationMember>,
 );
+
+type OSMPoint = shape(
+  'node_id' => int,
+  'latitude' => float,
+  'longitude' => float,
+);
+
+type OSMBoundingBox = shape(
+  'minlat' => float,
+  'maxlat' => float,
+  'minlon' => float,
+  'maxlon' => float,
+);

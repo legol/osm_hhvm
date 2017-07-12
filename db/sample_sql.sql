@@ -102,3 +102,6 @@ insert into way_bounding_box(way_ref, minlon, minlat, maxlon, maxlat, wgs84_boun
 
 -- indexed query, much faster
 select relation_ref, minlat, minlon, maxlat, maxlon, st_astext(wgs84_bounding_box) from relation_bounding_box where wgs84_bounding_box && ST_SetSRID(ST_MakeLine(ST_MakePoint(116.3731852, 39.8752726), ST_MakePoint(116.380653, 39.8705841)), 4326)
+
+-- select bounding box of way
+select way_ref, minlat, minlon, maxlat, maxlon, st_astext(wgs84_bounding_box) from way_bounding_box limit 10;

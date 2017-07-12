@@ -1,6 +1,18 @@
 <?hh
 
-require_once 'OsmTileGenerator.php';
+set_include_path(get_include_path().PATH_SEPARATOR.'../osm_parser');
+set_include_path(
+  get_include_path().PATH_SEPARATOR.'../osm_bounding_box_calculator',
+);
+
+spl_autoload_extensions('.php');
+
+spl_autoload_register(
+  function($class_name) {
+    include $class_name.'.php';
+  },
+);
+
 
 // $shortopts  = "";
 // $shortopts .= "i:";  // Required value

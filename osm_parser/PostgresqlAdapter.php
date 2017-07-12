@@ -8,6 +8,9 @@ class PostgresqlAdapter {
   private bool $save_way_sql_prepared = false;
   private bool $save_relation_sql_prepared = false;
   private bool $save_tag_sql_prepared = false;
+  private bool $gen_all_ways_sql_saved = false;
+  private bool $gen_points_of_way_sql_saved = false;
+  private bool $gen_save_way_bounding_box_sql_saved = false;
 
   public static function create(): PostgresqlAdapter {
     return new PostgresqlAdapter();
@@ -315,6 +318,131 @@ class PostgresqlAdapter {
       }
 
       $order++;
+    }
+
+    return true;
+  }
+
+  public async function genAllWays(int $offset): Awaitable<?Vector<int>> {
+    if ($this->gen_all_ways_sql_saved === false) {
+      $result = pg_prepare(
+        $this->conn,
+        "gen_all_ways",
+        'select way.id as way_ref from way offset $1 limit $2',
+      );
+      if ($result === FALSE) {
+        return null;
+      }
+
+      $this->gen_all_ways_sql_saved = true;
+    }
+
+    $limit = 1000;
+    $result = pg_execute($this->conn, "gen_all_ways", array($offset, $limit));
+    if ($result === FALSE) {
+      return null;
+    }
+
+    $ways = Vector {};
+    while (($row = pg_fetch_row($result)) !== FALSE) {
+      $ways[] = (int)($row[0]);
+    }
+
+    return $ways;
+  }
+
+  public async function genPointsOfWay(
+    int $way_id,
+  ): Awaitable<?Vector<OSMPoint>> {
+    if ($this->gen_points_of_way_sql_saved === false) {
+      $result = pg_prepare(
+        $this->conn,
+        "gen_points_of_way",
+        '
+          select id as nd_ref, ST_Y(node.wgs84long_lat) as lat, ST_X(node.wgs84long_lat) as lon from node
+          right join
+            (select way_nd.nd_ref from way_nd where way_nd.way_ref=$1 order by "order" desc) as nodes
+          on node.id = nodes.nd_ref
+        ',
+      );
+      if ($result === FALSE) {
+        return null;
+      }
+
+      $this->gen_points_of_way_sql_saved = true;
+    }
+
+    $result = pg_execute($this->conn, "gen_points_of_way", array($way_id));
+    if ($result === FALSE) {
+      return null;
+    }
+
+    $points_of_way = Vector {};
+    while (($row = pg_fetch_row($result)) !== FALSE) {
+      $points_of_way[] = shape(
+        'node_id' => (int)($row[0]),
+        'latitude' => (float)($row[1]),
+        'longitude' => (float)($row[2]),
+      );
+    }
+
+    return $points_of_way;
+  }
+
+  public async function genSaveWayBoundingBox(
+    int $way_id,
+    OSMBoundingBox $bounding_box,
+  ): Awaitable<bool> {
+    if ($this->gen_save_way_bounding_box_sql_saved === false) {
+      $result = pg_prepare(
+        $this->conn,
+        "gen_save_way_bounding_box",
+        '
+          insert into way_bounding_box(
+            way_ref,
+            minlat,
+            minlon,
+            maxlat,
+            maxlon,
+            wgs84_bounding_box
+          ) values (
+            $1,
+            $2,
+            $3,
+            $4,
+            $5,
+            ST_SetSRID(ST_Envelope(ST_MakeLine(ST_MakePoint($6, $7), ST_MakePoint($8, $9))), 4326)
+          )
+        ',
+      );
+      if ($result === FALSE) {
+        return false;
+      }
+
+      $this->gen_save_way_bounding_box_sql_saved = true;
+    }
+
+    $result = pg_execute(
+      $this->conn,
+      "gen_save_way_bounding_box",
+      array(
+        $way_id,
+        $bounding_box['minlat'],
+        $bounding_box['minlon'],
+        $bounding_box['maxlat'],
+        $bounding_box['maxlon'],
+
+        // top left
+        $bounding_box['minlon'],
+        $bounding_box['maxlat'],
+
+        // right bottom
+        $bounding_box['maxlon'],
+        $bounding_box['minlat'],
+      ),
+    );
+    if ($result === FALSE) {
+      return false;
     }
 
     return true;
