@@ -1,0 +1,123 @@
+[
+    {
+        "name": "facebook/xhp-lib",
+        "version": "2.3.1",
+        "version_normalized": "2.3.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/facebook/xhp-lib.git",
+            "reference": "71aa75139e89b33e83049e01512c13c7364b9885"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/facebook/xhp-lib/zipball/71aa75139e89b33e83049e01512c13c7364b9885",
+            "reference": "71aa75139e89b33e83049e01512c13c7364b9885",
+            "shasum": ""
+        },
+        "require": {
+            "fredemmott/type-assert": "^0.2.0",
+            "hhvm": "~3.12"
+        },
+        "require-dev": {
+            "91carriage/phpunit-hhi": "^5.1.0",
+            "phpunit/phpunit": "^5.1.0"
+        },
+        "time": "2016-11-07T22:31:20+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "description": "Class library for XHP",
+        "homepage": "https://github.com/facebook/xhp-lib",
+        "keywords": [
+            "facebook",
+            "hack",
+            "hhvm",
+            "xhp"
+        ]
+    },
+    {
+        "name": "fredemmott/type-assert",
+        "version": "v0.2",
+        "version_normalized": "0.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/fredemmott/type-assert.git",
+            "reference": "e3fe89ada31110a8f092661236f769674a9a1fd6"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/fredemmott/type-assert/zipball/e3fe89ada31110a8f092661236f769674a9a1fd6",
+            "reference": "e3fe89ada31110a8f092661236f769674a9a1fd6",
+            "shasum": ""
+        },
+        "require": {
+            "hhvm": "~3.12"
+        },
+        "require-dev": {
+            "91carriage/phpunit-hhi": "~5.1",
+            "phpunit/phpunit": "~5.1"
+        },
+        "time": "2016-09-28T04:21:05+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "ISC"
+        ],
+        "description": "Convert untyped data to typed data",
+        "keywords": [
+            "TypeAssert",
+            "hack"
+        ]
+    },
+    {
+        "name": "mikey179/vfsStream",
+        "version": "v1.1.0",
+        "version_normalized": "1.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/mikey179/vfsStream.git",
+            "reference": "fc0fe8f4d0b527254a2dc45f0c265567c881d07e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/mikey179/vfsStream/zipball/fc0fe8f4d0b527254a2dc45f0c265567c881d07e",
+            "reference": "fc0fe8f4d0b527254a2dc45f0c265567c881d07e",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2012-08-25T12:49:29+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "org\\bovigo\\vfs": "src/main/php"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD"
+        ],
+        "homepage": "http://vfs.bovigo.org/"
+    }
+]

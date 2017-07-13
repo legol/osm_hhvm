@@ -8,12 +8,30 @@ class OsmTileGenerator {
   }
 
   public async function gen(
-    int $tile_x,
-    int $tile_y,
-    int $tile_l,
-  ): Awaitable<bool> {
-    printf("Generating (%d, %d):%d\n", $tile_x, $tile_y, $tile_l);
-    printf("Done...\n");
-    return true;
+    string $lat_lon_level,
+  ): Awaitable<?Imagick> {
+    $matched = array();
+    preg_match_all("/(.*),(.*),(.*)/", $lat_lon_level, $matched);
+
+    if ((new Vector($matched))->count() !== 4) {
+      return null;
+    }
+
+    $lat = (float)$matched[1];
+    $lon = (float)$matched[2];
+    $level = (int)$matched[3];
+
+    $img = new Imagick();
+    $img->newImage(256, 256, "none");
+    $img->setImageFormat ("png");
+
+
+    $red = new ImagickDraw();
+    $red->setFillColor("#FF0000");
+    $red->rectangle(0.0, 0.0, 50.0, 200.0);
+
+    $img->drawImage($red);
+
+    return $img;
   }
 }

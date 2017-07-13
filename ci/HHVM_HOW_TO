@@ -1,0 +1,42 @@
+start hhvm server and using hphpd
+
+1. Make sure the file /etc/hhvm/server.ini looks like this:
+; php options
+
+pid = /var/run/hhvm/pid
+
+; hhvm specific 
+
+hhvm.server.port = 10000
+hhvm.server.type = fastcgi
+hhvm.server.default_document = index.php
+hhvm.log.use_log_file = true
+hhvm.log.file = /var/log/hhvm/error.log
+hhvm.repo.central.path = /var/run/hhvm/hhvm.hhbc
+hhvm.sandbox.sandbox_mode = 1
+hhvm.debugger.enable_debugger = 1
+hhvm.debugger.enable_debugger_server = 1
+
+2. start hhvm like this:
+hhvm -m server -c /etc/hhvm/server.ini
+
+3. modify ~/.bashrc, add this
+alias hphpd='hhvm -m debug'
+
+4. source ~/.bashrc
+
+5. start the debuger
+hphpd -h localhost
+machine list
+machine attach 2
+
+
+
+
+
+%(root project directory) touch .hhconfig
+# Then run the typechecker client.
+%(root project directory) hh_client
+
+
+each time in VIM, after editing, run !hh_client
