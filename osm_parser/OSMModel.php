@@ -46,3 +46,8 @@ type OSMBoundingBox = shape(
   'minlon' => float,
   'maxlon' => float,
 );
+
+type OSMLayer = shape (
+  'points' => Vector<OSMPoint>,
+  'tags' => Vector<OSMTag>,
+);

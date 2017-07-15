@@ -8,9 +8,10 @@ class PostgresqlAdapter {
   private bool $save_way_sql_prepared = false;
   private bool $save_relation_sql_prepared = false;
   private bool $save_tag_sql_prepared = false;
-  private bool $gen_all_ways_sql_saved = false;
-  private bool $gen_points_of_way_sql_saved = false;
-  private bool $gen_save_way_bounding_box_sql_saved = false;
+  private bool $gen_all_ways_sql_prepared = false;
+  private bool $gen_points_of_way_sql_prepared = false;
+  private bool $gen_save_way_bounding_box_sql_prepared = false;
+  private bool $gen_ways_by_bounding_box_sql_prepared = false;
 
   public static function create(): PostgresqlAdapter {
     return new PostgresqlAdapter();
@@ -324,7 +325,7 @@ class PostgresqlAdapter {
   }
 
   public async function genAllWays(int $offset): Awaitable<?Vector<int>> {
-    if ($this->gen_all_ways_sql_saved === false) {
+    if ($this->gen_all_ways_sql_prepared === false) {
       $result = pg_prepare(
         $this->conn,
         "gen_all_ways",
@@ -334,7 +335,7 @@ class PostgresqlAdapter {
         return null;
       }
 
-      $this->gen_all_ways_sql_saved = true;
+      $this->gen_all_ways_sql_prepared = true;
     }
 
     $limit = 1000;
@@ -393,7 +394,7 @@ class PostgresqlAdapter {
     int $way_id,
     OSMBoundingBox $bounding_box,
   ): Awaitable<bool> {
-    if ($this->gen_save_way_bounding_box_sql_saved === false) {
+    if ($this->gen_save_way_bounding_box_sql_prepared === false) {
       $result = pg_prepare(
         $this->conn,
         "gen_save_way_bounding_box",
@@ -419,7 +420,7 @@ class PostgresqlAdapter {
         return false;
       }
 
-      $this->gen_save_way_bounding_box_sql_saved = true;
+      $this->gen_save_way_bounding_box_sql_prepared = true;
     }
 
     $result = pg_execute(
@@ -447,4 +448,47 @@ class PostgresqlAdapter {
 
     return true;
   }
+
+  public async function genWaysByBoundingBox(
+    OSMBoundingBox $bounding_box,
+  ): Awaitable<?Vector<int>> {
+    if ($this->gen_ways_by_bounding_box_sql_prepared === false) {
+      $result = pg_prepare(
+        $this->conn,
+        "gen_ways_by_bounding_box",
+        '
+        select way_ref
+        from way_bounding_box
+        where wgs84_bounding_box && ST_SetSRID(ST_MakeLine(ST_MakePoint($1, $2), ST_MakePoint($3, $4)), 4326)
+        ',
+      );
+      if ($result === FALSE) {
+        return null;
+      }
+
+      $this->gen_ways_by_bounding_box_sql_prepared = true;
+    }
+
+    $result = pg_execute(
+      $this->conn,
+      "gen_ways_by_bounding_box",
+      array(
+        $bounding_box['minlon'],
+        $bounding_box['maxlat'],
+        $bounding_box['maxlon'],
+        $bounding_box['minlat'],
+      ),
+    );
+    if ($result === FALSE) {
+      return null;
+    }
+
+    $ways = Vector {};
+    while (($row = pg_fetch_row($result)) !== FALSE) {
+      $ways[] = (int)($row[0]);
+    }
+
+    return $ways;
+  }
+
 }

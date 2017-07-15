@@ -125,7 +125,7 @@ class OsmTileUtils {
     $x = (self::clip((float)$pixelX, 0.0, $mapSize - 1) / $mapSize) - 0.5;
     $y = 0.5 - (self::clip((float)$pixelY, 0.0, $mapSize - 1) / $mapSize);
 
-    $latitude = 90 - 360 * atan(exp(-y * 2 * M_PI)) / M_PI;
+    $latitude = 90 - 360 * atan(exp(-$y * 2 * M_PI)) / M_PI;
     $longitude = 360 * $x;
 
     return shape('latitude' => $latitude, 'longitude' => $longitude);
@@ -169,5 +169,41 @@ class OsmTileUtils {
     $pixelY = $tileY * 256;
 
     return shape('pixelX' => $pixelX, 'pixelY' => $pixelY);
+  }
+
+  /// Converts latitude/longitude into tile top left latitude/longitude and
+  /// bot right latitude/longitude
+  public static function latLongToTileBoundingBox(
+    float $latitude,
+    float $longitude,
+    int $tile_level,
+  ): OSMBoundingBox {
+    $pixel_XY =
+      OsmTileUtils::latLongToPixelXY($latitude, $longitude, $tile_level);
+    $tile_XY =
+      OsmTileUtils::pixelXYToTileXY($pixel_XY['pixelX'], $pixel_XY['pixelY']);
+    $left_top_pixel_XY =
+      OsmTileUtils::tileXYToPixelXY($tile_XY['tileX'], $tile_XY['tileY']);
+    $bot_right_pixel_XY = shape(
+      'pixelX' => $left_top_pixel_XY['pixelX'] + 256,
+      'pixelY' => $left_top_pixel_XY['pixelY'] + 256,
+    );
+    $top_left_lat_lon = OsmTileUtils::pixelXYToLatLong(
+      $left_top_pixel_XY['pixelX'],
+      $left_top_pixel_XY['pixelY'],
+      $tile_level,
+    );
+    $bot_right_lat_lon = OsmTileUtils::pixelXYToLatLong(
+      $bot_right_pixel_XY['pixelX'],
+      $bot_right_pixel_XY['pixelY'],
+      $tile_level,
+    );
+
+    return shape(
+      'minlon' => $top_left_lat_lon['longitude'],
+      'minlat' => $top_left_lat_lon['latitude'],
+      'maxlon' => $bot_right_lat_lon['longitude'],
+      'maxlat' => $bot_right_lat_lon['latitude'],
+    );
   }
 }
