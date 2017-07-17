@@ -1,7 +1,5 @@
 <?hh
 
-require_once 'OSMModel.php';
-
 class PostgresqlAdapter {
   private $conn = null;
   private bool $save_node_sql_prepared = false;
@@ -12,6 +10,7 @@ class PostgresqlAdapter {
   private bool $gen_points_of_way_sql_prepared = false;
   private bool $gen_save_way_bounding_box_sql_prepared = false;
   private bool $gen_ways_by_bounding_box_sql_prepared = false;
+  private bool $gen_tags_sql_prepared = false;
 
   public static function create(): PostgresqlAdapter {
     return new PostgresqlAdapter();
@@ -355,7 +354,7 @@ class PostgresqlAdapter {
   public async function genPointsOfWay(
     int $way_id,
   ): Awaitable<?Vector<OSMPoint>> {
-    if ($this->gen_points_of_way_sql_saved === false) {
+    if ($this->gen_points_of_way_sql_prepared === false) {
       $result = pg_prepare(
         $this->conn,
         "gen_points_of_way",
@@ -370,7 +369,7 @@ class PostgresqlAdapter {
         return null;
       }
 
-      $this->gen_points_of_way_sql_saved = true;
+      $this->gen_points_of_way_sql_prepared = true;
     }
 
     $result = pg_execute($this->conn, "gen_points_of_way", array($way_id));
@@ -491,4 +490,55 @@ class PostgresqlAdapter {
     return $ways;
   }
 
+  public async function genTags(
+    int $ref_id,
+    string $type,
+  ): Awaitable<?Map<string, string>> {
+    if ($this->gen_tags_sql_prepared === false) {
+      $result = pg_prepare(
+        $this->conn,
+        "gen_tags_node",
+        'select k, v from node_tag where nd_ref=$1',
+      );
+      if ($result === FALSE) {
+        return null;
+      }
+
+      $result = pg_prepare(
+        $this->conn,
+        "gen_tags_way",
+        'select k, v from way_tag where way_ref=$1',
+      );
+      if ($result === FALSE) {
+        return null;
+      }
+
+      $result = pg_prepare(
+        $this->conn,
+        "gen_tags_relation",
+        'select k, v from relation_tag where relation_ref=$1',
+      );
+      if ($result === FALSE) {
+        return null;
+      }
+
+      $this->gen_tags_sql_prepared = true;
+    }
+
+    if ($type !== 'node' && $type !== 'way' && $type !== 'relation') {
+      return null;
+    }
+
+    $result = pg_execute($this->conn, "gen_tags_".$type, array($ref_id));
+    if ($result === FALSE) {
+      return nul;
+    }
+
+    $tags = Map {};
+    while (($row = pg_fetch_row($result)) !== FALSE) {
+      $tags[$row[0]] = $row[1];
+    }
+
+    return $tags;
+  }
 }

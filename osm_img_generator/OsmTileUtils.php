@@ -171,6 +171,86 @@ class OsmTileUtils {
     return shape('pixelX' => $pixelX, 'pixelY' => $pixelY);
   }
 
+  /// <summary>
+  /// Converts tile XY coordinates into a QuadKey at a specified level of detail.
+  /// </summary>
+  /// <param name="tileX">Tile X coordinate.</param>
+  /// <param name="tileY">Tile Y coordinate.</param>
+  /// <param name="levelOfDetail">Level of detail, from 1 (lowest detail)
+  /// to 23 (highest detail).</param>
+  /// <returns>A string containing the QuadKey.</returns>
+  public static function tileXYToQuadKey(
+    int $tileX,
+    int $tileY,
+    int $levelOfDetail,
+  ): string {
+    $quadKey = '';
+    for ($i = $levelOfDetail; $i > 0; $i--) {
+      $digit = 0;
+      $mask = 1 << ($i - 1);
+      if (($tileX & $mask) != 0) {
+        $digit++;
+      }
+      if (($tileY & $mask) != 0) {
+        $digit++;
+        $digit++;
+      }
+      $quadKey .= $digit;
+    }
+
+    return $quadKey;
+  }
+
+
+
+  /// <summary>
+  /// Converts a QuadKey into tile XY coordinates.
+  /// </summary>
+  /// <param name="quadKey">QuadKey of the tile.</param>
+  /// <param name="tileX">Output parameter receiving the tile X coordinate.</param>
+  /// <param name="tileY">Output parameter receiving the tile Y coordinate.</param>
+  /// <param name="levelOfDetail">Output parameter receiving the level of detail.</param>
+  public static function quadKeyToTileXY(
+    string $quadKey,
+  ): ?shape(
+    'tileX' => int,
+    'tileY' => int,
+    'level' => int,
+  ) {
+    $tileX = $tileY = 0;
+    $levelOfDetail = strlen($quadKey);
+    for ($i = $levelOfDetail; $i > 0; $i--) {
+      $mask = 1 << ($i - 1);
+      switch ($quadKey[$levelOfDetail - i]) {
+        case '0':
+          break;
+
+        case '1':
+          $tileX |= $mask;
+          break;
+
+        case '2':
+          $tileY |= $mask;
+          break;
+
+        case '3':
+          $tileX |= $mask;
+          $tileY |= $mask;
+          break;
+
+        default:
+          // throw new ArgumentException("Invalid QuadKey digit sequence.");
+          return null;
+      }
+    }
+
+    return shape(
+      'tileX' => $tileX,
+      'tileY' => $tileY,
+      'level' => $levelOfDetail,
+    );
+  }
+
   /// Converts latitude/longitude into tile top left latitude/longitude and
   /// bot right latitude/longitude
   public static function latLongToTileBoundingBox(
@@ -200,10 +280,10 @@ class OsmTileUtils {
     );
 
     return shape(
-      'minlon' => $top_left_lat_lon['longitude'],
       'minlat' => $top_left_lat_lon['latitude'],
-      'maxlon' => $bot_right_lat_lon['longitude'],
       'maxlat' => $bot_right_lat_lon['latitude'],
+      'minlon' => $top_left_lat_lon['longitude'],
+      'maxlon' => $bot_right_lat_lon['longitude'],
     );
   }
 }
