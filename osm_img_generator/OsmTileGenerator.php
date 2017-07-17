@@ -30,7 +30,7 @@ class OsmTileGenerator {
       return null;
     }
 
-    return await $this->genRender($all_layers, $tile_level);
+    return await $this->genRender($all_layers, $tile_level, $bounding_box);
   }
 
   private async function genLayers(
@@ -168,9 +168,10 @@ class OsmTileGenerator {
   private async function genRender(
     Map<int, Map<string, Vector<OSMLayer>>> $all_layers,
     int $tile_level,
+    OSMBoundingBox $bounding_box,
   ): Awaitable<Imagick> {
-    $image_width = 256;
-    $image_height = 256;
+    $image_width = 1024;
+    $image_height = 1024;
 
     $img = new Imagick();
     $img->newImage($image_width, $image_height, "none");
@@ -182,7 +183,81 @@ class OsmTileGenerator {
     //
     // $img->drawImage($red);
     //
+    for ($layerIdx = -5; $layerIdx <= 5; $layerIdx++) {
+      $layers = $all_layers[$layerIdx];
+
+      $layer_land = $layers["layer_land"];
+      foreach ($layer_land as $land) {
+        await $this->genRenderLand($land, $img, $bounding_box);
+      }
+    }
 
     return $img;
+  }
+
+  private async function genRenderLand(
+    OSMLayer $layer,
+    Imagick $img,
+    OSMBoundingBox $bounding_box,
+  ): Awaitable<void> {
+
+    $points = Vector {};
+    foreach ($layer['points'] as $point) {
+      $imagePoint = self::OsmPoint2ImagePoint(
+        $point,
+        $bounding_box,
+        $img->getImageWidth(),
+        $img->getImageHeight(),
+      );
+
+      $points[] = $imagePoint;
+    }
+
+    await self::genRenderPolygon($img, $points);
+  }
+
+  private static function OsmPoint2ImagePoint(
+    OSMPoint $osmPoint,
+    OSMBoundingBox $boundingBox,
+    int $imageWidth,
+    int $imageHeight,
+  ): shape('x' => int, 'y' => int) {
+    return shape(
+      'x' =>
+        (int) round(
+          $imageWidth *
+          ($osmPoint['longitude'] - $boundingBox['minlon']) /
+          ($boundingBox['maxlon'] - $boundingBox['minlon']),
+        ),
+      'y' =>
+        (int) round(
+          $imageHeight -
+          $imageHeight * ($osmPoint['latitude'] - $boundingBox['minlat']) /
+          ($boundingBox['maxlat'] - $boundingBox['minlat']),
+        ),
+    );
+  }
+
+  private static async function genRenderPolygon(
+    Imagick $img,
+    Vector<shape('x' => int, 'y' => int)> $points,
+  ): Awaitable<void> {
+    $draw = new ImagickDraw();
+
+    $draw->setStrokeOpacity(1.0);
+    $draw->setStrokeColor('#FF0000');
+    $draw->setStrokeWidth(2.0);
+    $draw->setFillColor('#00FF00');
+
+    // $points = [
+    //   ['x' => 40 * 5, 'y' => 10 * 5],
+    //   ['x' => 20 * 5, 'y' => 20 * 5],
+    //   ['x' => 70 * 5, 'y' => 50 * 5],
+    //   ['x' => 60 * 5, 'y' => 15 * 5],
+    // ];
+
+    $draw->polygon($points->toArray());
+
+    $img->drawImage($draw);
   }
 }
