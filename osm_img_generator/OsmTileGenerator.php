@@ -121,7 +121,7 @@ class OsmTileGenerator {
     } else if (OsmUtils::isWaterway($tags)) {
       $layers["layer_water"][] = shape('points' => $points, 'tags' => $tags);
       $layers["layer_tag"][] = shape('points' => $points, 'tags' => $tags);
-    } else if (OsmUtils::isNetural($tags)) {
+    } else if (OsmUtils::isNatural($tags)) {
       $layers["layer_natural"][] = shape(
         'points' => $points,
         'tags' => $tags,
@@ -153,12 +153,10 @@ class OsmTileGenerator {
         'tags' => $tags,
       );
     } else {
-      if (!OsmUtils::isPower($tags)) {
         $layers["layer_other"][] = shape(
           'points' => $points,
           'tags' => $tags,
         );
-      }
     }
 
     $db->close();
@@ -177,18 +175,58 @@ class OsmTileGenerator {
     $img->newImage($image_width, $image_height, "none");
     $img->setImageFormat ("png");
 
-    // $red = new ImagickDraw();
-    // $red->setFillColor("#FF0000");
-    // $red->rectangle(0.0, 0.0, 50.0, 200.0);
-    //
-    // $img->drawImage($red);
-    //
     for ($layerIdx = -5; $layerIdx <= 5; $layerIdx++) {
       $layers = $all_layers[$layerIdx];
 
-      $layer_land = $layers["layer_land"];
-      foreach ($layer_land as $land) {
+      $layer_of_one_type = $layers["layer_land"];
+      foreach ($layer_of_one_type as $land) {
         await $this->genRenderLand($land, $img, $bounding_box);
+      }
+
+      $layer_of_one_type = $layers["layer_natural"];
+      foreach ($layer_of_one_type as $one_layer) {
+        await $this->genRenderNatural($one_layer, $img, $bounding_box);
+      }
+
+      $layer_of_one_type = $layers["layer_building"];
+      foreach ($layer_of_one_type as $one_layer) {
+        await $this->genRenderBuilding($one_layer, $img, $bounding_box);
+      }
+
+      $layer_of_one_type = $layers["layer_water"];
+      foreach ($layer_of_one_type as $one_layer) {
+        await $this->genRenderWater($one_layer, $img, $bounding_box);
+      }
+
+      // highwayline_edge -> highway_edge -> highwayline_inner -> highway_inner
+      $layer_of_one_type = $layers["layer_highway_link"];
+      foreach ($layer_of_one_type as $one_layer) {
+        await $this->genRenderHighwayLink($one_layer, $img, $bounding_box);
+      }
+
+      $layer_of_one_type = $layers["layer_highway"];
+      foreach ($layer_of_one_type as $one_layer) {
+        await $this->genRenderHighway($one_layer, $img, $bounding_box);
+      }
+
+      $layer_of_one_type = $layers["layer_rail"];
+      foreach ($layer_of_one_type as $one_layer) {
+        await $this->genRenderRail($one_layer, $img, $bounding_box);
+      }
+
+      // $layer_of_one_type = $layers["layer_other"];
+      // foreach ($layer_of_one_type as $one_layer) {
+      //   await $this->genRenderOthers($one_layer, $img, $bounding_box);
+      // }
+
+      $layer_of_one_type = $layers["layer_boundary"];
+      foreach ($layer_of_one_type as $one_layer) {
+        await $this->genRenderBoundary($one_layer, $img, $bounding_box);
+      }
+
+      $layer_of_one_type = $layers["layer_debug"];
+      foreach ($layer_of_one_type as $one_layer) {
+        await $this->genRenderDebug($one_layer, $img, $bounding_box);
       }
     }
 
@@ -216,6 +254,181 @@ class OsmTileGenerator {
     await self::genRenderPolygon($img, $points);
   }
 
+  private async function genRenderNatural(
+    OSMLayer $layer,
+    Imagick $img,
+    OSMBoundingBox $bounding_box,
+  ): Awaitable<void> {
+
+    $points = Vector {};
+    foreach ($layer['points'] as $point) {
+      $imagePoint = self::OsmPoint2ImagePoint(
+        $point,
+        $bounding_box,
+        $img->getImageWidth(),
+        $img->getImageHeight(),
+      );
+
+      $points[] = $imagePoint;
+    }
+
+    await self::genRenderPolygon($img, $points);
+  }
+
+  private async function genRenderBuilding(
+    OSMLayer $layer,
+    Imagick $img,
+    OSMBoundingBox $bounding_box,
+  ): Awaitable<void> {
+
+    $points = Vector {};
+    foreach ($layer['points'] as $point) {
+      $imagePoint = self::OsmPoint2ImagePoint(
+        $point,
+        $bounding_box,
+        $img->getImageWidth(),
+        $img->getImageHeight(),
+      );
+
+      $points[] = $imagePoint;
+    }
+
+    await self::genRenderPolygon($img, $points);
+  }
+
+  private async function genRenderWater(
+    OSMLayer $layer,
+    Imagick $img,
+    OSMBoundingBox $bounding_box,
+  ): Awaitable<void> {
+
+    $points = Vector {};
+    foreach ($layer['points'] as $point) {
+      $imagePoint = self::OsmPoint2ImagePoint(
+        $point,
+        $bounding_box,
+        $img->getImageWidth(),
+        $img->getImageHeight(),
+      );
+
+      $points[] = $imagePoint;
+    }
+
+    await self::genRenderPolygon($img, $points);
+  }
+
+  private async function genRenderHighwayLink(
+    OSMLayer $layer,
+    Imagick $img,
+    OSMBoundingBox $bounding_box,
+  ): Awaitable<void> {
+
+    $points = Vector {};
+    foreach ($layer['points'] as $point) {
+      $imagePoint = self::OsmPoint2ImagePoint(
+        $point,
+        $bounding_box,
+        $img->getImageWidth(),
+        $img->getImageHeight(),
+      );
+
+      $points[] = $imagePoint;
+    }
+
+    await self::genRenderPolygonLine($img, $points);
+  }
+
+  private async function genRenderHighway(
+    OSMLayer $layer,
+    Imagick $img,
+    OSMBoundingBox $bounding_box,
+  ): Awaitable<void> {
+
+    $points = Vector {};
+    foreach ($layer['points'] as $point) {
+      $imagePoint = self::OsmPoint2ImagePoint(
+        $point,
+        $bounding_box,
+        $img->getImageWidth(),
+        $img->getImageHeight(),
+      );
+
+      $points[] = $imagePoint;
+    }
+
+    await self::genRenderPolygonLine($img, $points);
+  }
+
+  private async function genRenderRail(
+    OSMLayer $layer,
+    Imagick $img,
+    OSMBoundingBox $bounding_box,
+  ): Awaitable<void> {
+
+    $points = Vector {};
+    foreach ($layer['points'] as $point) {
+      $imagePoint = self::OsmPoint2ImagePoint(
+        $point,
+        $bounding_box,
+        $img->getImageWidth(),
+        $img->getImageHeight(),
+      );
+
+      $points[] = $imagePoint;
+    }
+
+    await self::genRenderPolygonLine($img, $points);
+  }
+
+  private async function genRenderOthers(
+    OSMLayer $layer,
+    Imagick $img,
+    OSMBoundingBox $bounding_box,
+  ): Awaitable<void> {
+
+    $points = Vector {};
+    foreach ($layer['points'] as $point) {
+      $imagePoint = self::OsmPoint2ImagePoint(
+        $point,
+        $bounding_box,
+        $img->getImageWidth(),
+        $img->getImageHeight(),
+      );
+
+      $points[] = $imagePoint;
+    }
+
+    await self::genRenderPolygonLine($img, $points);
+  }
+
+  private async function genRenderBoundary(
+    OSMLayer $layer,
+    Imagick $img,
+    OSMBoundingBox $bounding_box,
+  ): Awaitable<void> {
+
+    $points = Vector {};
+    foreach ($layer['points'] as $point) {
+      $imagePoint = self::OsmPoint2ImagePoint(
+        $point,
+        $bounding_box,
+        $img->getImageWidth(),
+        $img->getImageHeight(),
+      );
+
+      $points[] = $imagePoint;
+    }
+
+    await self::genRenderPolygon($img, $points);
+  }
+
+  private async function genRenderDebug(
+    OSMLayer $layer,
+    Imagick $img,
+    OSMBoundingBox $bounding_box,
+  ): Awaitable<void> {
+  }
+
   private static function OsmPoint2ImagePoint(
     OSMPoint $osmPoint,
     OSMBoundingBox $boundingBox,
@@ -231,7 +444,7 @@ class OsmTileGenerator {
         ),
       'y' =>
         (int) round(
-          $imageHeight -
+          // $imageHeight -
           $imageHeight * ($osmPoint['latitude'] - $boundingBox['minlat']) /
           ($boundingBox['maxlat'] - $boundingBox['minlat']),
         ),
@@ -249,15 +462,22 @@ class OsmTileGenerator {
     $draw->setStrokeWidth(2.0);
     $draw->setFillColor('#00FF00');
 
-    // $points = [
-    //   ['x' => 40 * 5, 'y' => 10 * 5],
-    //   ['x' => 20 * 5, 'y' => 20 * 5],
-    //   ['x' => 70 * 5, 'y' => 50 * 5],
-    //   ['x' => 60 * 5, 'y' => 15 * 5],
-    // ];
-
     $draw->polygon($points->toArray());
+    $img->drawImage($draw);
+  }
 
+  private static async function genRenderPolygonLine(
+    Imagick $img,
+    Vector<shape('x' => int, 'y' => int)> $points,
+  ): Awaitable<void> {
+    $draw = new ImagickDraw();
+
+    $draw->setStrokeOpacity(1.0);
+    $draw->setStrokeWidth(3.0);
+    $draw->setStrokeColor('#0000FF');
+    $draw->setFillAlpha(0.0);
+
+    $draw->polyline($points->toArray());
     $img->drawImage($draw);
   }
 }

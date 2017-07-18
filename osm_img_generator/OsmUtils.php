@@ -9,7 +9,7 @@ class OsmUtils {
     return $tags->containsKey('landuse');
   }
 
-  public static function isNetural(Map<string, string> $tags): bool {
+  public static function isNatural(Map<string, string> $tags): bool {
     return $tags->containsKey('natural');
   }
 
