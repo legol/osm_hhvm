@@ -2,4 +2,5 @@ In browser:
 
 http://192.168.1.111:10002/ci/test1.php
 http://192.168.1.111:10002/ci/index.php?c=Sentences&m=getSentences
-http://192.168.1.111:10002/ci/index.php?c=TileGenerator&m=getTile&at=40.0941989,116.2914031,15
+http://192.168.1.111:10002/ci/index.php?c=TileGenerator&m=getTileByLocation&at=40.0941989,116.2914031,13
+http://192.168.1.111:10002/ci/index.php?c=TileGenerator&m=getTile&at=6742,3099,13

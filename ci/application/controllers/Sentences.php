@@ -1,4 +1,4 @@
-<?hh
+<?hh 
 
 class Sentences extends CI_Controller {
 

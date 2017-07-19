@@ -1,4 +1,4 @@
-<?hh
+<?hh // strict
 
 class OsmUtils {
   public static function isBuilding(Map<string, string> $tags): bool {

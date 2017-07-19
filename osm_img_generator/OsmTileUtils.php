@@ -1,4 +1,4 @@
-<?hh
+<?hh // strict
 
 // require_once 'PostgresqlAdapter.php';
 
@@ -221,7 +221,7 @@ class OsmTileUtils {
     $levelOfDetail = strlen($quadKey);
     for ($i = $levelOfDetail; $i > 0; $i--) {
       $mask = 1 << ($i - 1);
-      switch ($quadKey[$levelOfDetail - i]) {
+      switch ($quadKey[$levelOfDetail - $i]) {
         case '0':
           break;
 
@@ -248,6 +248,52 @@ class OsmTileUtils {
       'tileX' => $tileX,
       'tileY' => $tileY,
       'level' => $levelOfDetail,
+    );
+  }
+
+  /// Converts latitude/longitude into tile XY
+  public static function latLongToTileXY(
+    float $latitude,
+    float $longitude,
+    int $tile_level,
+  ): shape(
+    'tileX' => int,
+    'tileY' => int,
+  ) {
+    $pixel_XY =
+      OsmTileUtils::latLongToPixelXY($latitude, $longitude, $tile_level);
+    return
+      OsmTileUtils::pixelXYToTileXY($pixel_XY['pixelX'], $pixel_XY['pixelY']);
+  }
+
+  /// Get the bounding box of a tile
+  public static function tileBoundingBox(
+    int $tile_x,
+    int $tile_y,
+    int $tile_level,
+  ): OSMBoundingBox {
+    $left_top_pixel_XY =
+      OsmTileUtils::tileXYToPixelXY($tile_x, $tile_y);
+    $bot_right_pixel_XY = shape(
+      'pixelX' => $left_top_pixel_XY['pixelX'] + 256,
+      'pixelY' => $left_top_pixel_XY['pixelY'] + 256,
+    );
+    $top_left_lat_lon = OsmTileUtils::pixelXYToLatLong(
+      $left_top_pixel_XY['pixelX'],
+      $left_top_pixel_XY['pixelY'],
+      $tile_level,
+    );
+    $bot_right_lat_lon = OsmTileUtils::pixelXYToLatLong(
+      $bot_right_pixel_XY['pixelX'],
+      $bot_right_pixel_XY['pixelY'],
+      $tile_level,
+    );
+
+    return shape(
+      'minlat' => $top_left_lat_lon['latitude'],
+      'maxlat' => $bot_right_lat_lon['latitude'],
+      'minlon' => $top_left_lat_lon['longitude'],
+      'maxlon' => $bot_right_lat_lon['longitude'],
     );
   }
 
