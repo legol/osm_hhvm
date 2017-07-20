@@ -491,3 +491,73 @@ INFO - 2017-07-18 23:14:51 --> Controller Class Initialized
 INFO - 2017-07-18 23:14:51 --> Database Driver Class Initialized
 INFO - 2017-07-18 23:14:55 --> Final output sent to browser
 DEBUG - 2017-07-18 23:14:55 --> Total execution time: 3.1537
+INFO - 2017-07-18 23:54:25 --> Config Class Initialized
+INFO - 2017-07-18 23:54:25 --> Hooks Class Initialized
+DEBUG - 2017-07-18 23:54:25 --> UTF-8 Support Enabled
+INFO - 2017-07-18 23:54:25 --> Utf8 Class Initialized
+INFO - 2017-07-18 23:54:26 --> URI Class Initialized
+INFO - 2017-07-18 23:54:26 --> Router Class Initialized
+INFO - 2017-07-18 23:54:26 --> Output Class Initialized
+INFO - 2017-07-18 23:54:26 --> Security Class Initialized
+DEBUG - 2017-07-18 23:54:27 --> Global POST, GET and COOKIE data sanitized
+INFO - 2017-07-18 23:54:27 --> Input Class Initialized
+INFO - 2017-07-18 23:54:27 --> Language Class Initialized
+INFO - 2017-07-18 23:54:31 --> Config Class Initialized
+INFO - 2017-07-18 23:54:31 --> Hooks Class Initialized
+DEBUG - 2017-07-18 23:54:31 --> UTF-8 Support Enabled
+INFO - 2017-07-18 23:54:31 --> Utf8 Class Initialized
+INFO - 2017-07-18 23:54:31 --> URI Class Initialized
+INFO - 2017-07-18 23:54:31 --> Router Class Initialized
+INFO - 2017-07-18 23:54:31 --> Output Class Initialized
+INFO - 2017-07-18 23:54:31 --> Security Class Initialized
+DEBUG - 2017-07-18 23:54:31 --> Global POST, GET and COOKIE data sanitized
+INFO - 2017-07-18 23:54:31 --> Input Class Initialized
+INFO - 2017-07-18 23:54:31 --> Language Class Initialized
+INFO - 2017-07-18 23:54:36 --> Loader Class Initialized
+INFO - 2017-07-18 23:54:37 --> Helper loaded: url_helper
+INFO - 2017-07-18 23:54:37 --> Controller Class Initialized
+INFO - 2017-07-18 23:54:37 --> Loader Class Initialized
+INFO - 2017-07-18 23:54:37 --> Helper loaded: url_helper
+INFO - 2017-07-18 23:54:37 --> Controller Class Initialized
+INFO - 2017-07-18 23:54:37 --> Database Driver Class Initialized
+INFO - 2017-07-18 23:54:37 --> Database Driver Class Initialized
+ERROR - 2017-07-18 23:54:40 --> Severity: Warning --> mysql_connect(): Lost connection to MySQL server at 'waiting for initial communication packet', system error: 110  0
+ERROR - 2017-07-18 23:54:40 --> Severity: Warning --> mysql_connect(): Lost connection to MySQL server at 'waiting for initial communication packet', system error: 110  0
+ERROR - 2017-07-18 23:54:42 --> Unable to connect to the database
+ERROR - 2017-07-18 23:54:44 --> Unable to connect to the database
+INFO - 2017-07-18 23:54:47 --> Language file loaded: language/english/db_lang.php
+INFO - 2017-07-18 23:54:50 --> Language file loaded: language/english/db_lang.php
+INFO - 2017-07-18 23:54:57 --> Config Class Initialized
+INFO - 2017-07-18 23:54:57 --> Hooks Class Initialized
+DEBUG - 2017-07-18 23:54:57 --> UTF-8 Support Enabled
+INFO - 2017-07-18 23:54:57 --> Utf8 Class Initialized
+INFO - 2017-07-18 23:54:57 --> URI Class Initialized
+INFO - 2017-07-18 23:54:57 --> Router Class Initialized
+INFO - 2017-07-18 23:54:57 --> Output Class Initialized
+INFO - 2017-07-18 23:54:57 --> Security Class Initialized
+DEBUG - 2017-07-18 23:54:57 --> Global POST, GET and COOKIE data sanitized
+INFO - 2017-07-18 23:54:57 --> Input Class Initialized
+INFO - 2017-07-18 23:54:57 --> Language Class Initialized
+INFO - 2017-07-18 23:54:57 --> Loader Class Initialized
+INFO - 2017-07-18 23:54:57 --> Helper loaded: url_helper
+INFO - 2017-07-18 23:54:57 --> Controller Class Initialized
+INFO - 2017-07-18 23:54:57 --> Database Driver Class Initialized
+INFO - 2017-07-18 23:54:58 --> Config Class Initialized
+INFO - 2017-07-18 23:54:58 --> Hooks Class Initialized
+DEBUG - 2017-07-18 23:54:58 --> UTF-8 Support Enabled
+INFO - 2017-07-18 23:54:58 --> Utf8 Class Initialized
+INFO - 2017-07-18 23:54:58 --> URI Class Initialized
+INFO - 2017-07-18 23:54:58 --> Router Class Initialized
+INFO - 2017-07-18 23:54:58 --> Output Class Initialized
+INFO - 2017-07-18 23:54:58 --> Security Class Initialized
+DEBUG - 2017-07-18 23:54:58 --> Global POST, GET and COOKIE data sanitized
+INFO - 2017-07-18 23:54:58 --> Input Class Initialized
+INFO - 2017-07-18 23:54:58 --> Language Class Initialized
+INFO - 2017-07-18 23:54:58 --> Loader Class Initialized
+INFO - 2017-07-18 23:54:58 --> Helper loaded: url_helper
+INFO - 2017-07-18 23:54:58 --> Controller Class Initialized
+INFO - 2017-07-18 23:54:58 --> Database Driver Class Initialized
+INFO - 2017-07-18 23:55:03 --> Final output sent to browser
+DEBUG - 2017-07-18 23:55:03 --> Total execution time: 4.6676
+INFO - 2017-07-18 23:55:03 --> Final output sent to browser
+DEBUG - 2017-07-18 23:55:03 --> Total execution time: 5.5589
