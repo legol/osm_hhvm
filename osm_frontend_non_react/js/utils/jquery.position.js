@@ -8,7 +8,7 @@
       if (transform == 'none') {
         return {x:0, y:0};
       } else {
-        var matched = transform.match(/matrix\(\d+, \d+, \d+, \d+, (\d+), (\d+)\)/);
+        var matched = transform.match(/matrix\(.*,.*,.*,.*,(.*),(.*)\)/);
         if (matched[0] != transform) {
           return {x:0, y:0};
         } else {

@@ -11,3 +11,18 @@
     width:100%;
     height:100%;
 }
+
+.tile {
+    height:256px;
+    width: 256px;
+    border: 1px solid #00FF00;
+    margin:0px;
+    position: absolute;
+}
+
+.tile_debug {
+    top: 0;
+    left: 0;
+    z-index: 100;
+    position: absolute;
+}
