@@ -68,15 +68,15 @@ if (!TileController) {
             var l = viewport.left;
             var r = viewport.left + viewport.width;
 
-            l = (l <= 0) ? Math.floor(l / tileWidth) * tileWidth : Math.ceil(l / tileWidth) * tileWidth;
-            t = (t <= 0) ? Math.floor(t / tileHeight) * tileHeight : Math.ceil(t / tileHeight) * tileHeight;
+            l = Math.floor(l / tileWidth) * tileWidth;
+            t = Math.floor(t / tileHeight) * tileHeight;
 
             window.console.log("l, t, r, b = " + l + "," + t + "," + r + "," + b);
 
             while(t <= b){
 
                 var l = viewport.left;
-                l = (l <= 0) ? Math.floor(l / tileWidth) * tileWidth : Math.ceil(l / tileWidth) * tileWidth;
+                l = Math.floor(l / tileWidth) * tileWidth;
 
                 window.console.log("l, t, r, b = " + l + "," + t + "," + r + "," + b);
 
