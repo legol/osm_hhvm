@@ -30,8 +30,8 @@ if (!TileController) {
         getViewport: function() {
           var canvas_pos = $("#map_canvas").get_position();
           return {
-            left:canvas_pos.x,
-            top:canvas_pos.y,
+            left:-canvas_pos.x,
+            top:-canvas_pos.y,
             width:$("#map_container").innerWidth(),
             height:$("#map_container").innerHeight(),
           };
@@ -61,6 +61,8 @@ if (!TileController) {
 
             // add missing tiles and remove redundant ones.
             var viewport = this.getViewport();
+            window.console.log('viewport:' + JSON.stringify(viewport));
+
             var t = viewport.top;
             var b = viewport.top + viewport.height;
             var l = viewport.left;
