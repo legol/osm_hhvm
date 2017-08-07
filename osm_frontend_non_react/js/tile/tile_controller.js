@@ -4,102 +4,110 @@
 
 if (!TileController) {
     var TileController = function () {
-        this.data = new Object();
+      this.data = new Object();
 
-        this.data.tileWidth = 256;
-        this.data.tileHeight = 256;
+      this.data.tileWidth = 256;
+      this.data.tileHeight = 256;
 
-        this.data.tiles = new Map();
+      this.data.tile_x = 6742;
+      this.data.tile_y = 3099;
+      this.data.tile_level = 13;
 
-        window.console.log("TileController loaded...");
+      this.data.tiles = new Map();
+
+      window.console.log("TileController loaded...");
     };
 
     TileController.prototype = {
-        init: function(){
-            window.console.log("TileController initialized.");
+      init: function(){
+        window.console.log("TileController initialized.");
 
-            $("#map_canvas").drag({
-                willDrag: $.proxy(this.willDrag, this),
-                didDrag: $.proxy(this.didDrag, this),
-                dragEnd: $.proxy(this.dragEnd, this)
-            });
+        $("#map_canvas").drag({
+          willDrag: $.proxy(this.willDrag, this),
+          didDrag: $.proxy(this.didDrag, this),
+          dragEnd: $.proxy(this.dragEnd, this)
+        });
 
-            this.tile();
-        },
+        this.tile();
+      },
 
-        getViewport: function() {
-          var canvas_pos = $("#map_canvas").get_position();
-          return {
-            left:-canvas_pos.x,
-            top:-canvas_pos.y,
-            width:$("#map_container").innerWidth(),
-            height:$("#map_container").innerHeight(),
-          };
-        },
+      getViewport: function() {
+        var canvas_pos = $("#map_canvas").get_position();
+        return {
+          left:-canvas_pos.x,
+          top:-canvas_pos.y,
+          width:$("#map_container").innerWidth(),
+          height:$("#map_container").innerHeight(),
+        };
+      },
 
-        willDrag: function(ui) {
-            window.console.log("will drag.");
-        },
+      willDrag: function(ui) {
+        window.console.log("will drag.");
+      },
 
-        didDrag: function(delta, ui) {
-            window.console.log("didDrag.");
+      didDrag: function(delta, ui) {
+        window.console.log("didDrag.");
 
-            this.tile();
-        },
+        this.tile();
+      },
 
-        dragEnd: function(ui) {
-            window.console.log("drag end.");
-        },
+      dragEnd: function(ui) {
+        window.console.log("drag end.");
+      },
 
-        getTileId: function(l, t) {
-          return ''.concat(l.toString(), ':', t.toString());
-        },
+      getTileId: function(l, t) {
+        return ''.concat(l.toString(), ':', t.toString());
+      },
 
-        tile: function() {
-            var tileWidth = this.data.tileWidth;
-            var tileHeight = this.data.tileHeight;
+      tile: function() {
+        var tileWidth = this.data.tileWidth;
+        var tileHeight = this.data.tileHeight;
 
-            // add missing tiles and remove redundant ones.
-            var viewport = this.getViewport();
-            window.console.log('viewport:' + JSON.stringify(viewport));
+        // add missing tiles and remove redundant ones.
+        var viewport = this.getViewport();
+        window.console.log('viewport:' + JSON.stringify(viewport));
 
-            var t = viewport.top;
-            var b = viewport.top + viewport.height;
-            var l = viewport.left;
-            var r = viewport.left + viewport.width;
+        var t = viewport.top;
+        var b = viewport.top + viewport.height;
+        var l = viewport.left;
+        var r = viewport.left + viewport.width;
 
-            l = Math.floor(l / tileWidth) * tileWidth;
-            t = Math.floor(t / tileHeight) * tileHeight;
+        l = Math.floor(l / tileWidth) * tileWidth;
+        t = Math.floor(t / tileHeight) * tileHeight;
 
-            window.console.log("l, t, r, b = " + l + "," + t + "," + r + "," + b);
+        window.console.log("l, t, r, b = " + l + "," + t + "," + r + "," + b);
 
-            while(t <= b){
+        while(t <= b){
 
-                var l = viewport.left;
-                l = Math.floor(l / tileWidth) * tileWidth;
+          var l = viewport.left;
+          l = Math.floor(l / tileWidth) * tileWidth;
 
-                window.console.log("l, t, r, b = " + l + "," + t + "," + r + "," + b);
+          window.console.log("l, t, r, b = " + l + "," + t + "," + r + "," + b);
 
-                while(l <= r){
-                    window.console.log("checking: " + this.getTileId(l, t));
+          while(l <= r){
+            window.console.log("checking: " + this.getTileId(l, t));
 
-                    var tile = this.data.tiles.get(this.getTileId(l, t));
-                    if (tile === undefined){
-                      window.console.log("add tile at: " + this.getTileId(l, t));
+            var tile = this.data.tiles.get(this.getTileId(l, t));
+            if (tile === undefined){
+              window.console.log("add tile at: " + this.getTileId(l, t));
 
-                      var newTile = new Tile();
-                      newTile.init();
-                      newTile.addTo("map_canvas", l, t);
+              var newTile = new Tile();
+              newTile.init(
+                Math.floor(l / tileWidth) + this.data.tile_x,
+                Math.floor(t / tileHeight) + this.data.tile_y,
+                this.data.tile_level,
+              );
+              newTile.addTo("map_canvas", l, t);
 
-                      this.data.tiles.set(this.getTileId(l, t), newTile);
-                    }
-
-                    l += tileWidth;
-                }
-
-                t += tileHeight;
+              this.data.tiles.set(this.getTileId(l, t), newTile);
             }
-        },
+
+            l += tileWidth;
+          }
+
+          t += tileHeight;
+        }
+      },
     };
 
     window.tileController = new TileController();
