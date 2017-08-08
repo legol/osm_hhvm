@@ -44,7 +44,7 @@ if (!Tile) {
             }
             $(this.data.div).position(newPos);
 
-            $(this.data.debug_div).text(this.getTileId(_left, _top));
+            $(this.data.debug_div).text(this.getTileId(_left, _top) + '-->' + `${this.data.tile_x},${this.data.tile_y},${this.data.tile_level}`);
             $(this.data.img).attr(
               'src',
               `http://192.168.1.111:10002/ci/index.php?c=TileGenerator&m=getTile&at=${this.data.tile_x},${this.data.tile_y},${this.data.tile_level}`,

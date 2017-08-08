@@ -15,7 +15,7 @@
 .tile {
     height:256px;
     width: 256px;
-    border: 1px solid #00FF00;
+    border: 1px solid #FF00FF;
     margin:0px;
     position: absolute;
 }
@@ -23,15 +23,18 @@
 .tile_debug {
     top: 0;
     left: 0;
-    z-index: 100;
+    z-index: 200;
     position: absolute;
+    color: red;
+    background-color:black;
 }
 
 .tile_img {
     top: 0;
     left: 0;
-    z-index: 200;
+    z-index: 100;
     width:100%;
     height:100%;
     position: absolute;
+    pointer-events: none;
 }
