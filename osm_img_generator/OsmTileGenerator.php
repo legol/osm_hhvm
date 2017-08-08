@@ -30,13 +30,24 @@ class OsmTileGenerator {
   private static async function genRenderPolygon(
     Imagick $img,
     Vector<shape('x' => int, 'y' => int)> $points,
+    shape(
+      'stroke_opacity' => float,
+      'stroke_color' => string,
+      'stroke_width' => float,
+      'fill_color' => string,
+    ) $style = shape(
+      'stroke_opacity' => 1.0,
+      'stroke_color' => '#FF0000',
+      'stroke_width' => 2.0,
+      'fill_color' => '#00FF00',
+    ),
   ): Awaitable<void> {
     $draw = new ImagickDraw();
 
-    $draw->setStrokeOpacity(1.0);
-    $draw->setStrokeColor('#FF0000');
-    $draw->setStrokeWidth(2.0);
-    $draw->setFillColor('#00FF00');
+    $draw->setStrokeOpacity($style['stroke_opacity']);
+    $draw->setStrokeColor($style['stroke_color']);
+    $draw->setStrokeWidth($style['stroke_width']);
+    $draw->setFillColor($style['fill_color']);
 
     $draw->polygon($points->toArray());
     $img->drawImage($draw);
@@ -45,12 +56,21 @@ class OsmTileGenerator {
   private static async function genRenderPolyline(
     Imagick $img,
     Vector<shape('x' => int, 'y' => int)> $points,
+    shape(
+      'stoke_opacity' => float,
+      'stroke_color' => string,
+      'stroke_width' => float,
+    ) $style = shape(
+      'stoke_opacity' => 1.0,
+      'stroke_color' => '#0000FF',
+      'stroke_width' => 3.0,
+    ),
   ): Awaitable<void> {
     $draw = new ImagickDraw();
 
-    $draw->setStrokeOpacity(1.0);
-    $draw->setStrokeWidth(3.0);
-    $draw->setStrokeColor('#0000FF');
+    $draw->setStrokeOpacity($style['stoke_opacity']);
+    $draw->setStrokeWidth($style['stroke_width']);
+    $draw->setStrokeColor($style['stroke_color']);
     $draw->setFillAlpha(0.0);
 
     $draw->polyline($points->toArray());
@@ -229,7 +249,12 @@ class OsmTileGenerator {
       $points[] = $imagePoint;
     }
 
-    await self::genRenderPolygon($img, $points);
+    await self::genRenderPolygon($img, $points, shape(
+      'stroke_opacity' => 1.0,
+      'stroke_color' => '#333333',
+      'stroke_width' => 1.0,
+      'fill_color' => '#AAAAAA',
+    ));
   }
 
   private async function genRenderNatural(
@@ -292,7 +317,20 @@ class OsmTileGenerator {
       $points[] = $imagePoint;
     }
 
-    await self::genRenderPolygon($img, $points);
+    if (idx($layer['tags'], 'waterway') === 'riverbank') {
+      await self::genRenderPolygon($img, $points, shape(
+        'stroke_opacity' => 1.0,
+        'stroke_color' => '#0000FF',
+        'stroke_width' => 1.0,
+        'fill_color' => '#0000AA',
+      ));
+    } else {
+      await self::genRenderPolyline($img, $points, shape(
+        'stoke_opacity' => 1.0,
+        'stroke_color' => '#0000FF',
+        'stroke_width' => 2.0,
+      ));
+    }
   }
 
   private async function genRenderHighwayLink(

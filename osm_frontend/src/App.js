@@ -6,8 +6,13 @@ import { Grid, Row, Col } from 'react-bootstrap';
 import { ButtonToolbar, ButtonGroup, Button } from 'react-bootstrap';
 import { DropdownButton, MenuItem } from 'react-bootstrap';
 
+import {TileController} from './js/tile_controller';
+
 class App extends Component {
   render() {
+    let tile_controller = new TileController();
+    tile_controller.init();
+
     return (
       <Grid className="full-height" fluid={true}>
         <Row className="show-border">
@@ -41,7 +46,11 @@ class App extends Component {
         </Row>
         <Row className="show-border">
           <Col lg={20} className="show-border">
-          <div name="map_container" className="show-border, full-height">full height</div>
+            <div name="map_container" className="show-border, full-height">
+              <div name="map_canvas" className="tile-border">
+
+              </div>
+            </div>
           </Col>
         </Row>
         <Row className="show-border">
